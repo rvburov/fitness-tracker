@@ -61,13 +61,6 @@ class Running(Training):
     CCALORIES_MEAN_SPEED_MULTIPLIER_RUN: int = 18
     CCALORIES_MEAN_SPEED_SHIFT_RUN: float = 1.79
 
-    def __init__(self,
-                 action: int,
-                 duration: float,
-                 weight: float
-                 ) -> None:
-        super().__init__(action, duration, weight)
-
     def get_spent_calories(self) -> float:
         return ((self.CCALORIES_MEAN_SPEED_MULTIPLIER_RUN
                 * self.get_mean_speed()
@@ -136,6 +129,8 @@ def read_package(workout_type: str, data: list[float]) -> Training:
     workout: Dict[str, Type[Training]] = {'SWM': Swimming,
                                           'RUN': Running,
                                           'WLK': SportsWalking}
+    if workout_type not in workout:
+        raise ValueError("Несуществующий код тренировки")
     return workout[workout_type](*data)
 
 
