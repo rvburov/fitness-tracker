@@ -129,6 +129,7 @@ def read_package(workout_type: str, data: list[float]) -> Training:
     workout: Dict[str, Type[Training]] = {'SWM': Swimming,
                                           'RUN': Running,
                                           'WLK': SportsWalking}
+    
     if workout_type not in workout:
         raise ValueError("Несуществующий код тренировки")
     return workout[workout_type](*data)
