@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import Dict, Type
 
 
@@ -12,11 +12,12 @@ class InfoMessage:
     calories: float
 
     def get_message(self) -> str:
-        return (f'Тип тренировки: {self.training_type}; '
-                f'Длительность: {self.duration:.3f} ч.; '
-                f'Дистанция: {self.distance:.3f} км; '
-                f'Ср. скорость: {self.speed:.3f} км/ч; '
-                f'Потрачено ккал: {self.calories:.3f}.')
+        message_template = 'Тип тренировки: {training_type}; ' \
+                           'Длительность: {duration:.3f} ч.; ' \
+                           'Дистанция: {distance:.3f} км; ' \
+                           'Ср. скорость: {speed:.3f} км/ч; ' \
+                           'Потрачено ккал: {calories:.3f}.'
+        return message_template.format(**asdict(self))
 
 
 class Training:
@@ -124,15 +125,16 @@ class Swimming(Training):
                 * self.duration)
 
 
+WORKOUT: Dict[str, Type[Training]] = {'SWM': Swimming,
+                                      'RUN': Running,
+                                      'WLK': SportsWalking}
+
+
 def read_package(workout_type: str, data: list[float]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    workout: Dict[str, Type[Training]] = {'SWM': Swimming,
-                                          'RUN': Running,
-                                          'WLK': SportsWalking}
-    
-    if workout_type not in workout:
+    if workout_type not in WORKOUT:
         raise ValueError("Несуществующий код тренировки")
-    return workout[workout_type](*data)
+    return WORKOUT[workout_type](*data)
 
 
 def main(training: Training) -> None:
